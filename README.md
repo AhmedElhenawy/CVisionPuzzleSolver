@@ -223,9 +223,11 @@ Examples:
 
 ## Running notes (Colab)
 
-- Ensure `OUTPUT_ROOT` points to your Drive path.
-- Recommended defaults (from experiments):
-  - `BAND_WIDTH = 5`
-  - `version = sharpened`
-  - `max_shift = 6`
-
+1. Upload notebooks
+2. Mount Google Drive (Colab):
+   ```python
+   from google.colab import drive
+   drive.mount('/content/drive')
+3. Ensure `OUTPUT_ROOT` points to your Drive path.
+4. Run Milestone 1 for tile generation
+5. Run Milestone 2 for evaluation and solving
