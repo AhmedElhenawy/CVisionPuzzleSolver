@@ -124,7 +124,7 @@ We first benchmark all versions using a **2×2** solver (small enough to evaluat
 For each version:
 1) compute seam costs with a simple metric (initially MSE on edge bands),
 2) solve 2×2 by exhaustive permutation search,
-3) compute accuracy using `GROUND_TRUTH`.
+3) compute accuracy using `REFERENCE`.
 
 Outcome: **`sharpened` performed best** and was selected for the main solver.
 
