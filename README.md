@@ -1,7 +1,7 @@
 # Gravity Falls Jigsaw Reconstruction (Milestone 1 + Milestone 2)
 
 Computer-vision pipeline for reconstructing square jigsaw puzzles from the Gravity Falls dataset.  
-Milestone 1 generates puzzle-piece metadata (contours/corners/edges) and multiple tile “versions”.  
+Milestone 1 generates puzzle-piece multiple tile “versions”.  
 Milestone 2 evaluates versions, solves 2×2 robustly, and implements a 4×4 solver using seam costs + global search.
 
 ---
@@ -39,8 +39,7 @@ permutation (tile placement in a grid).
 
 The project uses **edge/seam compatibility**:
 
-- In **Milestone 1**, we build a clean geometric representation (contours, corners, edges) and produce improved tile
-  versions for stronger matching signals.
+- In **Milestone 1**, we produce improved tile versions for stronger matching signals.
 - In **Milestone 2**, we compute a **pairwise seam cost** between tiles using **ZNCC** (Zero-mean Normalized Cross
   Correlation) and allow small **shifts** to handle slight misalignment. We then perform **global optimization** to
   select a consistent full-grid placement.
@@ -66,50 +65,15 @@ Milestone 1 produces multiple processed versions (the repo expects at least):
 ## 4) Milestone 1 pipeline
 
 Milestone 1 is responsible for converting raw puzzle imagery into:
-1) tile crops (organized by image id/version), and  
-2) metadata describing each piece (contours/corners/edges).
-
+- tile crops (organized by image id/version)
+   
 ### 4.1 Preprocessing
 **Goal:** convert the image into a form where piece boundaries are easy to detect.
-
-Typical steps:
-- convert to grayscale
-- denoise (light blur if needed)
-- thresholding (often Otsu)
-- morphological cleanup (open/close) to remove holes and small artifacts
 
 **Justification:** segmentation/contour extraction is highly sensitive to noise. Preprocessing increases the chance that
 each puzzle piece becomes one clean connected component.
 
-### 4.2 Contour extraction
-**Goal:** detect each piece as a region boundary.
-
-Approach:
-- `cv2.findContours(..., RETR_EXTERNAL, ...)`
-- filter contours by area
-
-**Justification:** the contour gives a direct boundary representation and is the foundation for corners/edges.
-
-### 4.3 Corner estimation
-**Goal:** approximate each piece as a 4-corner polygon (since pieces are square tiles).
-
-Approach:
-- polygon approximation using `cv2.approxPolyDP`
-- fallback strategies when the approximation is not exactly 4 points
-
-**Justification:** corners provide a consistent way to define edges and their ordering (top/right/bottom/left).
-
-### 4.4 Edge representation
-**Goal:** represent each edge in a comparable, structured way.
-
-Approach:
-- sample points along the contour segment between corner pairs
-- optionally resample to fixed-length point sequences
-
-**Justification:** enables shape-based matching and provides a consistent geometric descriptor for edges, independent of
-pixel intensities.
-
-### 4.5 Tile “versions”
+### 4.2 Tile “versions”
 Milestone 1 generates several versions (e.g., grayscale, sharpened).  
 In Milestone 2 we empirically found **`sharpened`** to give the strongest seam matching signal.
 
